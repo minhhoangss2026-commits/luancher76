@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "Chào mừng đến với Cosmic Launcher",
+    "date": "2026-11-18T09:00:00+07:00",
+    "body": "Bản BETA đầu tiên đã ra mắt. Chạy được Minecraft Vanilla trên Windows, macOS, Linux."
+  },
+  {
+    "id": 2,
+    "title": "Cosmic Launcher 0.2.0 BETA",
+    "date": "2026-11-19T09:00:00+07:00",
+    "body": "Thêm Fabric/Quilt, Kho Mod Modrinth, FPS Boost, AI Auto-Fixer, xem skin 3D và trung tâm thông báo."
+  },
+  {
+    "id": 3,
+    "title": "Ví dụ thông báo đã lên lịch (sửa ngày giờ này)",
+    "date": "2030-01-01T09:00:00+07:00",
+    "body": "Thông báo này sẽ chỉ hiện khi đến đúng ngày giờ ở trên. Xóa hoặc sửa trước khi đăng."
+  }
+]

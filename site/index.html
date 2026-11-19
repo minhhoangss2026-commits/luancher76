@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cosmic Launcher · Thông báo</title>
+  <style>
+    :root { --bg:#f4f6ff; --card:rgba(255,255,255,.7); --text:#0b1020; --dim:rgba(11,16,32,.6); }
+    @media (prefers-color-scheme: dark) { :root { --bg:#070b1a; --card:rgba(30,34,56,.7); --text:#f5f7ff; --dim:rgba(245,247,255,.6); } }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:-apple-system,"SF Pro Display",Inter,system-ui,sans-serif; background:var(--bg); color:var(--text); }
+    main { max-width: 680px; margin: 0 auto; padding: 48px 20px; }
+    h1 { font-size: 32px; margin: 0 0 4px; }
+    .beta { font-size: 12px; background: linear-gradient(90deg,#fbbf24,#f97316); color:#000; padding:2px 10px; border-radius:999px; font-weight:700; letter-spacing:.1em; vertical-align:middle; }
+    p.sub { color: var(--dim); margin: 0 0 28px; }
+    .card { background: var(--card); backdrop-filter: blur(20px); border-radius: 24px; padding: 18px 20px; margin-bottom: 14px; }
+    .card h2 { margin: 0 0 2px; font-size: 18px; }
+    .card time { color: var(--dim); font-size: 12px; }
+    .card p { margin: 8px 0 0; }
+    #empty { color: var(--dim); }
+    .sub-box { margin-top: 28px; display:flex; gap:8px; }
+    .sub-box button { border:0; border-radius:999px; padding:10px 18px; background:#0a84ff; color:#fff; font-weight:600; cursor:pointer; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Cosmic Launcher <span class="beta">BETA</span></h1>
+  <p class="sub">Thông báo và tin tức mới nhất. Ứng dụng launcher sẽ hiện các thông báo này ở biểu tượng chuông.</p>
+  <div id="list"></div>
+  <p id="empty" hidden>Chưa có thông báo.</p>
+  <div class="sub-box">
+    <button id="notify">🔔 Bật thông báo trên trình duyệt</button>
+  </div>
+</main>
+<script>
+  const list = document.getElementById("list");
+  const KEY = "cosmic.web.seen";
+  fetch("news.json", { cache: "no-store" })
+    .then(r => r.json())
+    .then(all => {
+      // Lên lịch: chỉ hiện thông báo đã đến giờ đăng
+      const items = all.filter(i => new Date(i.date).getTime() <= Date.now());
+      if (!items.length) { document.getElementById("empty").hidden = false; return; }
+      for (const i of items) {
+        const el = document.createElement("div");
+        el.className = "card";
+        const h = document.createElement("h2"); h.textContent = i.title;
+        const t = document.createElement("time"); t.textContent = new Date(i.date).toLocaleString();
+        const p = document.createElement("p"); p.textContent = i.body;
+        el.append(h, t, p); list.append(el);
+      }
+      // thông báo trình duyệt khi có tin mới (chỉ hoạt động khi mở trang này)
+      const max = Math.max(...items.map(i => i.id));
+      const seen = Number(localStorage.getItem(KEY) || 0);
+      if (max > seen && Notification.permission === "granted") {
+        new Notification("Cosmic Launcher", { body: items.find(i => i.id === max).title });
+      }
+      localStorage.setItem(KEY, String(max));
+    })
+    .catch(() => { document.getElementById("empty").hidden = false; });
+
+  document.getElementById("notify").onclick = async () => {
+    if (!("Notification" in window)) return alert("Trình duyệt không hỗ trợ thông báo.");
+    const r = await Notification.requestPermission();
+    alert(r === "granted" ? "Đã bật. Thông báo hiện khi bạn mở lại trang này." : "Bạn đã từ chối thông báo.");
+  };
+</script>
+</body>
+</html>
